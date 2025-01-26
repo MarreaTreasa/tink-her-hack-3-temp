@@ -19,7 +19,7 @@ function IdeaForm({ onClose, onIdeaAdded, idea = null }) {
       setTechStack(idea.techStack.join(", "));
       setStatus(idea.status);
       setCollaborators(idea.collaborators.join(", "));
-      setOwners(idea.owners.map((owner) => owner.username).join(", "));
+      setOwners(idea.owners.username);
     }
   }, [idea]);
 
@@ -35,8 +35,9 @@ function IdeaForm({ onClose, onIdeaAdded, idea = null }) {
       status,
       collaborators:
         collaborators.split(",").map((item) => item.trim()) ?? "bleh",
-      owners: owners.split(",").map((item) => ({ username: item.trim() })),
+      owners: [{ username: owners }],
     };
+    console.log("Payload:", payload);
 
     const url = idea
       ? `http://localhost:5000/api/ideas/update/${idea._id}` // Update an existing idea
@@ -128,15 +129,17 @@ function IdeaForm({ onClose, onIdeaAdded, idea = null }) {
               </option>
             </select>
           </div>
-          {idea && <div className="mb-4">
-            <label className="block text-sm font-medium">Collaborators</label>
-            <input
-              type="text"
-              value={collaborators}
-              onChange={(e) => setCollaborators(e.target.value)}
-              className="w-full p-2 border rounded"
-            />
-          </div>}
+          {idea && (
+            <div className="mb-4">
+              <label className="block text-sm font-medium">Collaborators</label>
+              <input
+                type="text"
+                value={collaborators}
+                onChange={(e) => setCollaborators(e.target.value)}
+                className="w-full p-2 border rounded"
+              />
+            </div>
+          )}
           {/* <div className="mb-4">
             <label className="block text-sm font-medium">Owners</label>
             <input

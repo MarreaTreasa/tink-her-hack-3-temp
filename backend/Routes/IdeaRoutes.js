@@ -21,15 +21,18 @@ router.post("/add", async (req, res) => {
       return res.status(404).json({ message: "User not found." });
     }
 
+    console.log("User:", user);
+
     const newIdea = new Idea({
       title,
       description,
       category,
       techStack: techStack || [],
-      owners: [{ username: user.username, userId }],
+      owners: { username: user.username, userId },
       collaborators: [],
       status: status || "Pending",
     });
+
 
     await newIdea.save();
 

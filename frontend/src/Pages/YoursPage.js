@@ -89,8 +89,7 @@ function YoursPage() {
                     <strong>Status:</strong> {idea.status}
                   </p>
                   <p className="text-sm text-gray-500">
-                    <strong>Owners:</strong>{" "}
-                    {idea.owners.map((owner) => owner.username).join(", ")}
+                    <strong>Owners:</strong> {idea.owners.username}
                   </p>
                   <p className="text-sm text-gray-500">
                     <strong>Collaborators:</strong>{" "}
