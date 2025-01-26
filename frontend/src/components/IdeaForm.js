@@ -1,61 +1,67 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
-function IdeaForm({ onClose, onIdeaAdded }) {
+function IdeaForm({ onClose, onIdeaAdded, idea = null }) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
   const [techStack, setTechStack] = useState("");
+  const [status, setStatus] = useState("");
+  const [collaborators, setCollaborators] = useState("");
+  const [owners, setOwners] = useState("");
+
+  // Populate form fields if editing an existing idea
+  useEffect(() => {
+    console.log("useEffect triggered. Idea value:", idea);
+    if (idea) {
+      setTitle(idea.title);
+      setDescription(idea.description);
+      setCategory(idea.category);
+      setTechStack(idea.techStack.join(", "));
+      setStatus(idea.status);
+      setCollaborators(idea.collaborators.join(", "));
+      setOwners(idea.owners.map((owner) => owner.username).join(", "));
+    }
+  }, [idea]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const userId = localStorage.getItem("userId");
-
-    if (!userId) {
-      return console.error("User ID not found in localStorage!");
-    }
-
-    const userResponse = await fetch(
-      `http://localhost:5000/api/users/${userId}`
-    );
-    const userData = await userResponse.json();
-
-    if (!userData || !userData.username) {
-      return console.error("User data not found!");
-    }
-
-    const username = userData.username;
 
     const payload = {
+      userId: localStorage.getItem("userId"),
       title,
       description,
       category,
       techStack: techStack.split(",").map((item) => item.trim()),
-      owners: [username],
-      collaborators: [],
-      userId,
+      status,
+      collaborators:
+        collaborators.split(",").map((item) => item.trim()) ?? "bleh",
+      owners: owners.split(",").map((item) => ({ username: item.trim() })),
     };
 
+    const url = idea
+      ? `http://localhost:5000/api/ideas/update/${idea._id}` // Update an existing idea
+      : "http://localhost:5000/api/ideas/add"; // Add a new idea
+
     try {
-      const response = await fetch("http://localhost:5000/api/ideas/add", {
+      const response = await fetch(url, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-
+      console.log("Data sent:", payload);
       const data = await response.json();
 
       if (response.ok) {
-        console.log("Idea added successfully", data);
+        console.log("Idea saved successfully:", data);
+        console.log(response);
         onIdeaAdded();
         onClose();
       } else {
-        console.log("Error:", data.message);
         alert("Error: " + data.message);
       }
     } catch (error) {
-      console.error("Error while creating idea:", error);
+      console.log(error);
+      console.error("Error while saving idea:", error);
     }
   };
 
@@ -63,90 +69,91 @@ function IdeaForm({ onClose, onIdeaAdded }) {
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white p-6 rounded-lg shadow-lg w-80">
         <h2 className="text-2xl font-semibold text-center mb-4">
-          Add Your Idea
+          {idea ? "Edit Your Idea" : "Add Your Idea"}
         </h2>
-
         <form onSubmit={handleSubmit}>
+          {!idea && (
+            <>
+              <div className="mb-4">
+                <label className="block text-sm font-medium">Title</label>
+                <input
+                  type="text"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  className="w-full p-2 border rounded"
+                  required
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium">Description</label>
+                <textarea
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  className="w-full p-2 border rounded"
+                  required
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium">Category</label>
+                <input
+                  type="text"
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                  className="w-full p-2 border rounded"
+                  required
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium">Tech Stack</label>
+                <input
+                  type="text"
+                  value={techStack}
+                  onChange={(e) => setTechStack(e.target.value)}
+                  className="w-full p-2 border rounded"
+                  required
+                />
+              </div>
+            </>
+          )}
           <div className="mb-4">
-            <label
-              htmlFor="title"
-              className="block text-sm font-medium text-gray-700"
+            <label className="block text-sm font-medium">Status</label>
+            <select
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
+              className="w-full p-2 border rounded"
             >
-              Title
-            </label>
+              <option value="View">View</option>
+              <option value="Looking for collaborators">
+                Looking for collaborators
+              </option>
+            </select>
+          </div>
+          {idea && <div className="mb-4">
+            <label className="block text-sm font-medium">Collaborators</label>
             <input
               type="text"
-              id="title"
-              className="w-full mt-1 p-2 border border-gray-300 rounded-md"
-              placeholder="Enter the title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              required
+              value={collaborators}
+              onChange={(e) => setCollaborators(e.target.value)}
+              className="w-full p-2 border rounded"
             />
-          </div>
-
-          <div className="mb-4">
-            <label
-              htmlFor="description"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Description
-            </label>
-            <textarea
-              id="description"
-              className="w-full mt-1 p-2 border border-gray-300 rounded-md"
-              placeholder="Enter a brief description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              required
-            />
-          </div>
-
-          <div className="mb-4">
-            <label
-              htmlFor="category"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Category
-            </label>
+          </div>}
+          {/* <div className="mb-4">
+            <label className="block text-sm font-medium">Owners</label>
             <input
               type="text"
-              id="category"
-              className="w-full mt-1 p-2 border border-gray-300 rounded-md"
-              placeholder="Enter the category"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              required
+              value={owners}
+              onChange={(e) => setOwners(e.target.value)}
+              className="w-full p-2 border rounded"
             />
-          </div>
-
-          <div className="mb-4">
-            <label
-              htmlFor="techStack"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Tech Stack
-            </label>
-            <input
-              type="text"
-              id="techStack"
-              className="w-full mt-1 p-2 border border-gray-300 rounded-md"
-              placeholder="Enter tech stack (comma separated)"
-              value={techStack}
-              onChange={(e) => setTechStack(e.target.value)}
-              required
-            />
-          </div>
-
+          </div> */}
           <button
             type="submit"
-            className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition"
+            className="w-full bg-blue-500 text-white py-2 rounded"
           >
-            Submit
+            {idea ? "Update" : "Add"}
           </button>
         </form>
-
-        <button className="mt-4 text-blue-500 font-semibold" onClick={onClose}>
+        <button onClick={onClose} className="mt-4 text-blue-500">
           Close
         </button>
       </div>

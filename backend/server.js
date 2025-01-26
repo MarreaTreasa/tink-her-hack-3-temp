@@ -4,6 +4,7 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 const UserRoutes = require("./Routes/UserRoutes");
 const IdeaRoutes = require("./Routes/IdeaRoutes");
+/* const NotificationRoutes = require("./Routes/NotificationRoutes"); */
 require("dotenv").config();
 
 const app = express();
@@ -33,6 +34,7 @@ app.get("/", (req, res) => {
 // Include User Routes for authentication
 app.use("/api/users", UserRoutes);
 app.use("/api/ideas", IdeaRoutes);
+/* app.use("api/notification", NotificationRoutes); */
 
 // Add additional routes for Ideas, Collaborators, etc., as needed
 

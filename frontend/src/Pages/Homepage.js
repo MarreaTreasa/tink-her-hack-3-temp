@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import bg from "../components/images/bg.jpeg";
 
 const Homepage = () => {
   return (
@@ -6,6 +7,9 @@ const Homepage = () => {
       <section
         id="home"
         className="flex items-center justify-center h-screen bg-gradient-to-r from-purple-500 to-blue-500"
+        style={{
+          backgroundImage: `url(${bg})`,
+        }}
       >
         <motion.div
           className="text-center text-white"

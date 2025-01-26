@@ -4,6 +4,7 @@ import Navbar from "./components/Navbar";
 import MainPage from "./MainPage";
 import AuthPage from "./Pages/AuthPage";
 import YoursPage from "./Pages/YoursPage";
+import SingleIdea from "./Pages/SingleIdea";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           path="/auth"
           element={<AuthPage setShowPopup={() => {}} />}
         />{" "}
+        <Route path="/ideas/:ideaID" element={<SingleIdea />} />
       </Routes>
     </div>
   );
