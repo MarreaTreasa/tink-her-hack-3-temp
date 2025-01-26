@@ -18,7 +18,7 @@ app.use(cors()); // Enable Cross-Origin Resource Sharing
 const mongoURI = process.env.MONGO_URI;
 
 // Connect to MongoDB locally
-mongoose
+await mongoose
   .connect(mongoURI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
