@@ -18,8 +18,8 @@ const AuthPage = ({ setShowPopup }) => {
     };
 
     const url = isLogin
-      ? "http://localhost:5000/api/users/login"
-      : "http://localhost:5000/api/users/register";
+      ? `${process.env.REACT_APP_URI}/api/users/login`
+      : `${process.env.REACT_APP_URI}/api/users/register`;
     const method = "POST";
 
     try {

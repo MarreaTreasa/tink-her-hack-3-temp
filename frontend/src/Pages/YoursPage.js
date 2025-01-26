@@ -23,7 +23,7 @@ function YoursPage() {
 
     try {
       const response = await fetch(
-        `http://localhost:5000/api/ideas/user/${userId}`
+        `${process.env.REACT_APP_URI}/api/ideas/user/${userId}`
       );
       const data = await response.json();
 

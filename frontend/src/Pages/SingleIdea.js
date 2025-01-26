@@ -11,7 +11,7 @@ export default function SingleIdea() {
     const fetchIdea = async () => {
       try {
         const response = await fetch(
-          `http://localhost:5000/api/ideas/ideas/${ideaID}`
+          `${process.env.REACT_APP_URI}/api/ideas/ideas/${ideaID}`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch idea details");

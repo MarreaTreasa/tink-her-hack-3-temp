@@ -8,7 +8,9 @@ function NotificationsPage() {
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/notifications"); // Adjust the endpoint
+        const response = await fetch(
+          `${process.env.REACT_APP_URI}/api/notifications`
+        ); // Adjust the endpoint
         if (!response.ok) {
           throw new Error("Failed to fetch notifications");
         }
@@ -26,13 +28,16 @@ function NotificationsPage() {
   const handleAccept = async (notificationId, ideaId, requesterId) => {
     try {
       // Send accept request to the backend
-      const response = await fetch(`http://localhost:5000/api/notifications/accept/${notificationId}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ ideaId, requesterId }),
-      });
+      const response = await fetch(
+        `${process.env.REACT_APP_URI}/api/notifications/accept/${notificationId}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ ideaId, requesterId }),
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Failed to accept collaboration");
@@ -52,9 +57,12 @@ function NotificationsPage() {
   const handleReject = async (notificationId) => {
     try {
       // Send reject request to the backend
-      const response = await fetch(`http://localhost:5000/api/notifications/reject/${notificationId}`, {
-        method: "POST",
-      });
+      const response = await fetch(
+        `${process.env.REACT_APP_URI}/api/notifications/reject/${notificationId}`,
+        {
+          method: "POST",
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Failed to reject collaboration");
@@ -78,10 +86,20 @@ function NotificationsPage() {
         {notifications.map((notification) => (
           <li key={notification._id}>
             <p>{`Collaboration request from ${notification.requesterId} for idea: ${notification.ideaId}`}</p>
-            <button onClick={() => handleAccept(notification._id, notification.ideaId, notification.requesterId)}>
+            <button
+              onClick={() =>
+                handleAccept(
+                  notification._id,
+                  notification.ideaId,
+                  notification.requesterId
+                )
+              }
+            >
               Accept
             </button>
-            <button onClick={() => handleReject(notification._id)}>Reject</button>
+            <button onClick={() => handleReject(notification._id)}>
+              Reject
+            </button>
           </li>
         ))}
       </ul>

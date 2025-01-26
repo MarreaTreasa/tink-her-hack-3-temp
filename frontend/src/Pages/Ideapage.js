@@ -13,8 +13,7 @@ function IdeaPage() {
     const fetchTopLikedIdeas = async () => {
       try {
         const response = await fetch(
-          
-          "http://localhost:5000/api/ideas/top-liked"
+          `${process.env.REACT_APP_URI}/api/ideas/top-liked`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch top-liked ideas");
@@ -35,7 +34,7 @@ function IdeaPage() {
   const handleLike = async (ideaId, index) => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/ideas/like/${ideaId}`,
+        `${process.env.REACT_APP_URI}/api/ideas/like/${ideaId}`,
         {
           method: "POST",
           headers: {

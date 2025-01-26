@@ -40,8 +40,8 @@ function IdeaForm({ onClose, onIdeaAdded, idea = null }) {
     console.log("Payload:", payload);
 
     const url = idea
-      ? `http://localhost:5000/api/ideas/update/${idea._id}` // Update an existing idea
-      : "http://localhost:5000/api/ideas/add"; // Add a new idea
+      ? `${process.env.REACT_APP_URI}/api/ideas/update/${idea._id}` // Update an existing idea
+      : `${process.env.REACT_APP_URI}/api/ideas/add`; // Add a new idea
 
     try {
       const response = await fetch(url, {
